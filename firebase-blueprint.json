@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "Building": {
+      "title": "Building",
+      "description": "A building node in the water management system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "name": { "type": "string", "description": "Building name" },
+        "type": { "type": "string", "enum": ["Academic", "Residential", "Administrative", "Athletic"], "description": "Building category" },
+        "status": { "type": "string", "enum": ["Normal", "Warning", "Critical"], "description": "Current operational status" },
+        "currentUsage": { "type": "number", "description": "Current water usage in m3" },
+        "dailyLimit": { "type": "number", "description": "Maximum allowed daily usage in m3" },
+        "futureNeed": { "type": "number", "description": "AI-forecasted future water demand" },
+        "upgradeSuggestion": { "type": "string", "description": "AI-generated upgrade recommendation" },
+        "lastUpdated": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["id", "name", "type", "status", "currentUsage", "dailyLimit"]
+    }
+  },
+  "firestore": {
+    "/buildings": {
+      "schema": "Building",
+      "description": "Collection of all building nodes"
+    }
+  }
+}

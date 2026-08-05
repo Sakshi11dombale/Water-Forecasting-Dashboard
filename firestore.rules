@@ -1,0 +1,75 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: buildings
+    // Document ID: buildingId
+    // Fields:
+    //   - id: string (required) - Unique identifier
+    //   - name: string (required, size < 100) - Building name
+    //   - type: string (required, enum: Academic, Residential, Administrative, Athletic)
+    //   - status: string (required, enum: Normal, Warning, Critical)
+    //   - currentUsage: number (required, >= 0) - Current water usage in m3
+    //   - dailyLimit: number (required, > 0) - Maximum allowed daily usage in m3
+    //   - futureNeed: number (optional, >= 0) - AI-forecasted future water demand
+    //   - upgradeSuggestion: string (optional, size < 500) - AI-generated upgrade recommendation
+    //   - lastUpdated: string (optional, ISO 8601) - Last update timestamp
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "dombales98@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidBuilding(data) {
+      return hasRequiredFields(['id', 'name', 'type', 'status', 'currentUsage', 'dailyLimit']) &&
+             hasOnlyAllowedFields(['id', 'name', 'type', 'status', 'currentUsage', 'dailyLimit', 'futureNeed', 'upgradeSuggestion', 'lastUpdated']) &&
+             data.id is string &&
+             data.name is string && data.name.size() < 100 &&
+             data.type in ['Academic', 'Residential', 'Administrative', 'Athletic'] &&
+             data.status in ['Normal', 'Warning', 'Critical'] &&
+             data.currentUsage is number && data.currentUsage >= 0 &&
+             data.dailyLimit is number && data.dailyLimit > 0;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /buildings/{buildingId} {
+      // Allow authenticated users to read building data
+      allow read: if isAuthenticated();
+      
+      // Allow authenticated users to create or update building data (prototype)
+      allow create: if isAuthenticated() && isValidBuilding(request.resource.data);
+      allow update: if isAuthenticated() && isValidBuilding(request.resource.data);
+      
+      // Only admins can delete buildings
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

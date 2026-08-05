@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "Outfit", sans-serif;
+  
+  --color-brand-primary: #0EA5E9;
+  --color-brand-secondary: #0369A1;
+  --color-surface-bg: #F8FAFC;
+  --color-surface-card: #FFFFFF;
+  --color-surface-border: #F1F5F9;
+  --color-text-main: #0F172A;
+  --color-text-muted: #64748B;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.04), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.03), 0 8px 10px -6px rgb(0 0 0 / 0.03);
+  --shadow-glow: 0 0 20px -5px var(--color-brand-primary);
+}
+
+@layer base {
+  :root {
+    --surface-bg: #F8FAFC;
+    --surface-card: #FFFFFF;
+    --surface-border: #F1F5F9;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --grid-dot: #E2E8F0;
+  }
+
+  .dark {
+    --surface-bg: #020617;
+    --surface-card: #0F172A;
+    --surface-border: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --glass-bg: rgba(15, 23, 42, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --grid-dot: #1E293B;
+  }
+
+  body {
+    @apply bg-[var(--surface-bg)] text-[var(--text-main)] font-sans antialiased selection:bg-brand-primary/20 transition-colors duration-300;
+    background-image: radial-gradient(var(--grid-dot) 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+  }
+}
+
+.card-base {
+  @apply bg-[var(--surface-card)] border border-[var(--surface-border)] rounded-3xl shadow-sm overflow-hidden transition-all duration-500 hover:shadow-xl hover:shadow-brand-primary/5 hover:border-brand-primary/10;
+}
+
+.glass-panel {
+  @apply bg-[var(--glass-bg)] backdrop-blur-xl border border-[var(--glass-border)] shadow-2xl shadow-slate-200/50 dark:shadow-none;
+}
+
+.col-header {
+  @apply text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-display;
+}
+
+.data-value {
+  @apply font-mono font-semibold tracking-tight text-[var(--text-main)];
+}
+
+.status-badge {
+  @apply text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest flex items-center gap-2 border;
+}
+
+.glow-primary {
+  box-shadow: 0 0 15px -3px var(--color-brand-primary);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 15px -3px #10B981;
+}
+
+.glow-red {
+  box-shadow: 0 0 15px -3px #EF4444;
+}
+
+.grid-border {
+  @apply border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm;
+}
+
+.data-row {
+  @apply border-b border-slate-100 last:border-0 hover:bg-slate-50/80 transition-colors cursor-default;
+}
+
+/* Custom scrollbar for a cleaner look */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
